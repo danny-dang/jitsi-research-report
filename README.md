@@ -22,6 +22,7 @@ Network bandwidth that the server handles for 1 meeting of 10 participants:
 - Total: 45 + 61 = **106 Mbit/s**
 
 Network bandwidth that the server handles for 10,000 meetings: 106 * 10,000 = 1,060,000 Mbit/s = **1060 Gbit/s**
+Reference: [Calculation details](https://docs.google.com/document/d/1iNw-0a8fPM8KvjcCmp_VlumwKrXoLezFCqp_kHcocTM/edit?usp=sharing)
 
 Recommended type of server:
 - Name: C5N 18xlarge
