@@ -5,7 +5,7 @@ Research Report Jitsi Project Upwork
 
 ### Requirements
 
-- 1 meeting: 10 people, 720p
+- 1 meeting: 10 people, 720p - 1080p
 - Total simultaneous meetings: 10 meetings
 - Type of server, number of instances
 ### Recommendation
