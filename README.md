@@ -77,6 +77,8 @@ Desktop using [Jitsi Electron](https://github.com/jitsi/jitsi-meet-electron)
 - Windows
 - Linux
 
+Mobile apps: Not yet supported, should wait for updates
+
 ______________________BELOW ARE RESEARCH IN PROGRESS
 
 www.mainsite.com
