@@ -44,6 +44,7 @@ stereo: true,
 ```
 AP, AEC, NS, AGC, HPF are meant for optimizing video conferencing, disabling these options will bring back the original audio.
 The bitrate will improve from ~64 kbps to 80 - 128 kbps
+
 Reference: [https://community.jitsi.org/t/higher-audio-quality/31441/6](https://community.jitsi.org/t/higher-audio-quality/31441/6)
 
 
@@ -64,7 +65,9 @@ Changing video quality works now, you just need to change in the config.js, refe
 
 ## Data security and privacy
 ### EE2E for both 1x1 calls and video bridge calls
+
 Reference: [https://jitsi.org/blog/e2ee/](https://jitsi.org/blog/e2ee/)
+
 Browser support:
 - Chromium Browser (Edge, Chrome, Opera and Brave)
 - Safari not supported
