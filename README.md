@@ -44,28 +44,30 @@ The most important specification for a Jitsi server (Jisit Video Bridge mainly) 
 Network bandwidth that the server handles for 1 meeting of 10 participants:
 
 ***For video conference at 720p:***
-- In: (3.3 + 0.9 + 0.3) * 10 = 45 Mbit/s
-	- one 720p stream: 3.3 Mbit/s
-	- one 360p stream: 0.9 Mbit/s
-	- one 180p stream: 0.3 Mbit/s
-- Out: (3.4 + 9 * 0.3 ) * 10 = 61 Mbit/s
+- Network fluctuation: 1.2 (sometimes clients will send more or less bandwidth, we will multiply this number to get the ideal bandwidth)
+- In: (2.5 + 0.6 + 0.2) * 10 * 1.2 ~= 40 Mbit/s
+	- one 720p stream: 2.5 Mbit/s
+	- one 360p stream: 0.6 Mbit/s
+	- one 180p stream: 0.2 Mbit/s
+- Out: (2.5 + 9 * 0.2 ) * 10 * 1.2 ~= 51 Mbit/s
 	- one 720p stream
 	- nine 180p streams
-- Total: 45 + 61 = **106 Mbit/s**
+- Total: 40 + 51 = **91 Mbit/s**
 
-Network bandwidth that the server handles for 10,000 meetings: 106 * 10,000 = 1,060,000 Mbit/s = **1060 Gbit/s**
+Network bandwidth that the server handles for 10,000 meetings: 91 * 10,000 = 1,060,000 Mbit/s = **910 Gbit/s**
 
 ***For video conference at 1080p:***
-- In: (7.5 + 0.9 + 0.3) * 10 = 87 Mbit/s
-	- one 1080p stream: 7.5 Mbit/s
-	- one 360p stream: 0.9 Mbit/s
-	- one 180p stream: 0.3 Mbit/s
-- Out: (7.5 + 9 * 0.3 ) * 10 = 102 Mbit/s
+- Network fluctuation: 1.2 (sometimes clients will send more or less bandwidth, we will multiply this number to get the ideal bandwidth)
+- In: (5 + 0.6 + 0.2) * 10 *1.2 ~= 70 Mbit/s
+	- one 1080p stream: 5 Mbit/s
+	- one 360p stream: 0.6 Mbit/s
+	- one 180p stream: 0.2 Mbit/s
+- Out: (5 + 9 * 0.2 ) * 10 * 1.2 ~= 82 Mbit/s
 	- one 1080p stream
 	- nine 180p streams
-- Total: 87 + 102 = **189 Mbit/s**
+- Total: 70 + 82 = **152 Mbit/s**
 
-Network bandwidth that the server handles for 10,000 meetings: 189 * 10,000 = 1,890,000 Mbit/s = **1890 Gbit/s**
+Network bandwidth that the server handles for 10,000 meetings: 152 * 10,000 = 1,520,000 Mbit/s = **1520 Gbit/s**
 
 Reference: [Calculation details](https://docs.google.com/document/d/1iNw-0a8fPM8KvjcCmp_VlumwKrXoLezFCqp_kHcocTM/edit?usp=sharing)
 
@@ -75,18 +77,29 @@ Reference: [Calculation details](https://docs.google.com/document/d/1iNw-0a8fPM8
 **2. One database server to store users, system data**
 - Recommend: AWS RDS, Mongodb, ....
 
-**3. 10 - 18 maximum instances in AWS Auto Scaling Group for jitsi Video Bridge**
+**3. 10 - 15 maximum instances in AWS Auto Scaling Group for jitsi Video Bridge**
 
-Recommended type of server:
+Recommended type of server for best efficent:
 - Name: C5N 18xlarge
 - Memory: 192.0 GiB
 - CPU : 72 vCPUs
-- Network Performance: 100 Gigabit
+- Network Performance: 100 Gbit/s
 - Recommended minimum instances: 2
-- Recommended maximum instances: 18
---> **THIS METHOD WOULD BE A WATSE OF CPU AND MEMORY.**
+- Recommended maximum instances: 15
+- Price: $3317.76 (London)
 
-**I'm doing research on Elastic Load Balancer for better solution**
+Recommended type of server for cost saving (but less network stable)
+- Name: C5N 2xlarge
+- Memory: 21.0 GiB
+- CPU : 8 vCPUs
+- Network Performance: Up to 25 Gbit/s
+- Recommended minimum instances: 20
+- Recommended maximum instances: 122
+ Price: $368.64 (London)
+
+Elastic Load Balancer will be applied to distribute network bandwidths across instances.
+Auto Scaling will be applied to scale the number of instances.
+
 References:
 - [https://community.jitsi.org/t/aws-scale-for-big-deployment/22617/24](https://community.jitsi.org/t/aws-scale-for-big-deployment/22617/24)
 - [https://jitsi.org/blog/new-tutorial-video-scaling-jitsi-meet-in-the-cloud/](https://jitsi.org/blog/new-tutorial-video-scaling-jitsi-meet-in-the-cloud/)
