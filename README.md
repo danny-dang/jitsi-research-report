@@ -84,7 +84,9 @@ Recommended type of server:
 - Network Performance: 100 Gigabit
 - Recommended minimum instances: 2
 - Recommended maximum instances: 18
+--> **THIS METHOD WOULD BE A WATSE OF CPU AND MEMORY.**
 
+**I'm doing research on Elastic Load Balancer for better solution**
 References:
 - [https://community.jitsi.org/t/aws-scale-for-big-deployment/22617/24](https://community.jitsi.org/t/aws-scale-for-big-deployment/22617/24)
 - [https://jitsi.org/blog/new-tutorial-video-scaling-jitsi-meet-in-the-cloud/](https://jitsi.org/blog/new-tutorial-video-scaling-jitsi-meet-in-the-cloud/)
