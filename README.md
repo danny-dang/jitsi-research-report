@@ -86,7 +86,7 @@ Recommended type of server for best efficent:
 - Network Performance: 100 Gbit/s
 - Recommended minimum instances: 2
 - Recommended maximum instances: 15
-- Price: $3317.76 (London)
+- Price: $3317.76/ 1 instance (London)
 
 Recommended type of server for cost saving (but less network stable)
 - Name: C5N 2xlarge
@@ -95,7 +95,7 @@ Recommended type of server for cost saving (but less network stable)
 - Network Performance: Up to 25 Gbit/s
 - Recommended minimum instances: 20
 - Recommended maximum instances: 122
- Price: $368.64 (London)
+ Price: $368.64/ 1 instance (London)
 
 Elastic Load Balancer will be applied to distribute network bandwidths across instances.
 Auto Scaling will be applied to scale the number of instances.
