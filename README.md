@@ -137,7 +137,7 @@ Desktop using [Jitsi Electron](https://github.com/jitsi/jitsi-meet-electron)
 - Windows
 - Linux
 
-______________________BELOW ARE RESEARCHING
+______________________BELOW ARE RESEARCHING IN PROGRESS!
 
 www.mainsite.com
 1. Call external api, render video steam right in the mainsite
