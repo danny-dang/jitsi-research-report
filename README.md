@@ -137,7 +137,8 @@ Desktop using [Jitsi Electron](https://github.com/jitsi/jitsi-meet-electron)
 - Windows
 - Linux
 
-______________________RESEARCHING
+______________________BELOW ARE RESEARCHING
+
 www.mainsite.com
 1. Call external api, render video steam right in the mainsite
 2. Open a new window, like messenger : www.meet.mainsite.com/roomname&jwt=token
