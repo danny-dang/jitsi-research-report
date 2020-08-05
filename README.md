@@ -1,3 +1,4 @@
+
 # Jitsi Research Report for Tailwind Business Solutions
 ________________
 ## Understanding Jitsi
@@ -41,7 +42,9 @@ ________________
 ### Network Bandwidth Required Estimation
 The most important specification for a Jitsi server (Jisit Video Bridge mainly) is the network performance.
 
-Network bandwidth that the server handles for 1 meeting of 10 participants:
+Network bandwidth that the server handles for 1 meeting of 10 participants with **simulcast enabled**:
+
+> **Simulcast enabled**: Each client sends 3 quality videos to the server: best, normal, low.  The server then sends 1 best quality stream of the main speaker, n-1 low quality streams of all other participants to all participants. The server will send the normal quality videos to the user who enable grid view. It can easily be noticed that the quality of the video changes when switching between user videos
 
 ***For video conference at 720p:***
 - Network fluctuation: 1.2 (sometimes clients will send more or less bandwidth, we will multiply this number to get the ideal bandwidth)
@@ -86,7 +89,7 @@ Recommended type of server for best efficent:
 - Network Performance: 100 Gbit/s
 - Recommended minimum instances: 2
 - Recommended maximum instances: 15
-- Price: $3317.76/ 1 instance (London)
+- Price: $3317.76 (London)
 
 Recommended type of server for cost saving (but less network stable)
 - Name: C5N 2xlarge
@@ -95,7 +98,7 @@ Recommended type of server for cost saving (but less network stable)
 - Network Performance: Up to 25 Gbit/s
 - Recommended minimum instances: 20
 - Recommended maximum instances: 122
-- Price: $368.64/ 1 instance (London)
+ Price: $368.64 (London)
 
 Elastic Load Balancer will be applied to distribute network bandwidths across instances.
 Auto Scaling will be applied to scale the number of instances.
@@ -109,7 +112,15 @@ References:
 --> You'll need a very strong DevOps skill for this
 ## Improvement of Jitsi audio quality
 ### Recommendation
-Configure these settings in config.js
+
+Default Audio Codecs: **Opus**
+
+Increate target average audio bitrate in `config.js`, default to 20000:
+```
+// Valid values are in the range 6000 to 510000
+opusMaxAverageBitrate: 20000
+```
+Configure these settings in `config.js` to give back original audio
 ```
 disableAP: true, //audio processing
 disableAEC: true,  //Acoustic Echo Cancellation
@@ -118,7 +129,7 @@ disableAGC: true,  //Automatic Gain Control
 disableHPF: true,  //Highpass Filter
 stereo: true,
 ```
-AP, AEC, NS, AGC, HPF are meant for optimizing video conferencing, disabling these options will bring back the original audio.
+AP, AEC, NS, AGC, HPF are meant for optimizing video conferencing
 
 The bitrate will improve from ~64 kbps to 80 - 128 kbps
 
@@ -126,7 +137,14 @@ Reference: [https://community.jitsi.org/t/higher-audio-quality/31441/6](https://
 
 
 ## Improvement of Jitsi video quality
-Change the constraint in the `config.js`
+
+Video Codecs: **VP8** (default) or **H.264**
+
+Change between VP8 or H.264 can be done in `config.js`
+```
+preferH264: true
+```
+Change the constraint in the `config.js` will increase the ideal resolution
 ```
 constraints: {
     video: {
@@ -138,7 +156,7 @@ constraints: {
     }
 }
 ```
-Changing video quality works now, you just need to change in the config.js, reference: [https://community.jitsi.org/t/1080-jitsi-server-available-to-test-with/18796/23](https://community.jitsi.org/t/1080-jitsi-server-available-to-test-with/18796/22)
+Reference: [https://community.jitsi.org/t/1080-jitsi-server-available-to-test-with/18796/23](https://community.jitsi.org/t/1080-jitsi-server-available-to-test-with/18796/22)
 
 ## Data security and privacy
 ### EE2E for both 1x1 calls and video bridge calls
