@@ -1,6 +1,14 @@
 
 # Jitsi Research Report for Tailwind Business Solutions
-________________
+## Table of content
+1. [Understanding Jitsi](#understanding-jitsi)
+2. [Network bandwidth, AWS Recommendation](#network-bandwidth-aws-recommendation)
+3. [Improvement of Jitsi audio quality](#improvement-of-jitsi-audio-quality)
+4. [Improvement of Jitsi audio quality](#improvement-of-jitsi-video-quality)
+5. [Data security and privacy](#data-security-and-privacy)
+6. [Recommended Articles](#recommended-articles)
+
+
 ## Understanding Jitsi
 **1. Client**
 - This is where the user interact with the application, works as user interface connecting user and server.
@@ -32,7 +40,7 @@ ________________
 - [https://github.com/jitsi/jigasi](https://github.com/jitsi/jigasi)
 - Allows regular SIP clients to join Jitsi Meet conferences hosted by Jitsi Videobridge
 - Make call and users can dial in the meeting conference
-## Deployment of Jitisi on AWS EC2
+## Network bandwidth, AWS Recommendation
 
 ### Requirements
 
@@ -100,20 +108,20 @@ Recommended type of server for cost saving (but less network stable)
 - Recommended maximum instances: 122
  Price: $368.64 (London)
 
-Elastic Load Balancer will be applied to distribute network bandwidths across instances.
-Auto Scaling will be applied to scale the number of instances.
+Auto Scaling will be applied to scale the number of instances depending on the bandwidth and cpu usage.
 
-References:
-- [https://community.jitsi.org/t/aws-scale-for-big-deployment/22617/24](https://community.jitsi.org/t/aws-scale-for-big-deployment/22617/24)
-- [https://jitsi.org/blog/new-tutorial-video-scaling-jitsi-meet-in-the-cloud/](https://jitsi.org/blog/new-tutorial-video-scaling-jitsi-meet-in-the-cloud/)
-- [https://community.jitsi.org/t/working-multi-jitsi-meet-multi-videobridge-setup/24704](https://community.jitsi.org/t/working-multi-jitsi-meet-multi-videobridge-setup/24704)
-- [https://www.youtube.com/watch?v=LyGV4uW8km8](https://www.youtube.com/watch?v=LyGV4uW8km8)
+### Deploying in large scale
 
---> You'll need a very strong DevOps skill for this
+1. [Scale Jitsi Meet in the cloud](https://jitsi.org/blog/new-tutorial-video-scaling-jitsi-meet-in-the-cloud/)
+	- This tutorial shows the general idea of using HAProxy to load balance Jitsi Meet and Jitsi Video Bridge on the cloud (AWS), and how you should distribute your servers.
+2. [How to Load Balance Jitsi Meet](https://www.youtube.com/watch?v=LyGV4uW8km8)
+	- This tutorial show how to load balance jitsi meet technically
+3. [How Jitsi implement geographical bridge cascading for different regions](https://www.youtube.com/watch?v=32CpoFGKHM8&t=364s)
+
 ## Improvement of Jitsi audio quality
 ### Recommendation
 
-Default Audio Codecs: **Opus**
+Jitsi Audio Codecs: **Opus**
 
 Increate target average audio bitrate in `config.js`, default to 20000:
 ```
@@ -138,7 +146,7 @@ Reference: [https://community.jitsi.org/t/higher-audio-quality/31441/6](https://
 
 ## Improvement of Jitsi video quality
 
-Video Codecs: **VP8** (default) or **H.264**
+Jitsi video codecs: **VP8** (default) or **H.264**
 
 Change between VP8 or H.264 can be done in `config.js`
 ```
@@ -160,37 +168,70 @@ Reference: [https://community.jitsi.org/t/1080-jitsi-server-available-to-test-wi
 
 ## Data security and privacy
 ### EE2E for both 1x1 calls and video bridge calls
+Jitsi now is developing and testing E2EE
+
 Reference: [https://jitsi.org/blog/e2ee/](https://jitsi.org/blog/e2ee/)
+
 Browser support:
 - Chromium Browser (Edge, Chrome, Opera and Brave)
 - Safari not supported
 
-Desktop using [Jitsi Electron](https://github.com/jitsi/jitsi-meet-electron)
+Desktop using [Jitsi Electron](https://github.com/jitsi/jitsi-meet-electron) supports:
 - Mac
 - Windows
 - Linux
+### Security and Data distribution
+The two components which are inevitable for such a large scale system are Reverse Proxy, and a Load Balancer.
+1. Reverse Proxy:
 
-______________________BELOW ARE RESEARCHING IN PROGRESS!
+> Reverse Proxy mask the real location of the servers clients are accessing. A reverse proxy is a must-have for sites with millions of visitors, because they use many servers. All of the site’s traffic must pass through a reverse proxy and only then access the servers as to not overload them. It also brings two or more servers into the same URL space.
+2. Load Balancer:
+> A Load Balancer distribute the incoming traffic evenly among the different servers to prevent any single server from becoming overloaded. In the event that a server fails completely, other servers can step up to handle the traffic.
 
-www.mainsite.com
-1. Call external api, render video steam right in the mainsite
-2. Open a new window, like messenger : www.meet.mainsite.com/roomname&jwt=token
-www.meet.mainsite.com
-[https://github.com/nvonahsen/jitsi-token-moderation-plugin](https://github.com/nvonahsen/jitsi-token-moderation-plugin)
+Recommendation:
+- Cloudflare:
+   - [Cloudflare CDN](https://www.cloudflare.com/cdn/) 
+   - [Cloudflare Load Balancing](https://www.cloudflare.com/load-balancing/)
+ - HAProxy (Recommended by Jitsi):
+     -  [HAProxy](http://www.haproxy.org/)
+     - [How Jitsi use HAProxy for Cloud Scaling](https://jitsi.org/blog/new-tutorial-video-scaling-jitsi-meet-in-the-cloud/)
+### Secure authentication (multifactor)
+Authentication can be implemented so that only authenticated users can create a new conference room. I'm proposing 2 recommendations:
+1. Authentication using `mod_auth_custom_http` prosody plugin. 
+     - I found an article about someone implemented this plugin for 2-factor authentication using [PrivacyIDEA](https://www.privacyidea.org/): [https://jitsi.github.io/handbook/docs/devops-guide/secure-domain](https://jitsi.github.io/handbook/docs/devops-guide/secure-domain)
+     - This mod sends a POST request to your server or authentication  server. Hence, it can be a 2FA if it is using 2FA.
+ 2. Authentication using `jitsi-token-moderation-plugin` [prosody plugin](https://github.com/nvonahsen/jitsi-token-moderation-plugin) + existing jitsi token feature (Recommended):
+     - The user can login into your customer-facing website using any kind of authentication (2FA, etc.), then the website generate a token, this token can be used to login to jitsi meet and join a room.
+     - Jitsi's current token feature support for authentication. For example, when open a room, the user needs to have the token, otherwise he will be rejected. However, this feature doesn't support for role-based, which means, anyone log in first will be the moderator, the rest are participants. When the moderator lose connection or log out, the moderator role will be handed to a participant, and the previous mod won't be able to become a mod again when he returns.
+     - A moderator will have extra features such as: see the stats, kicks participant, mute participant, etc.
+     - `jitsi-token-moderation-plugin` comes into place, this plugin split the role based on token. Anyone who has token of moderator will be the moderator regardless of who join the meeting room first.
+     
+     - Example:
+         - A moderator -> Login as Mod in customer-facing website -> the customer-facing website give him a token `{moderator: true}` -> Join meeting -> he becomes mod of the meeting (he won't lose the moderator role even if he leave the meeting and returns)
+         - A participant -> Login as Participant in customer-facing website->the customer-facing website give him a token `{moderator: false}` -> Join Meeting -> participant of the meeting and will never become a moderator
+### Recording
+[Jibri](https://github.com/jitsi/jibri) can be used to record the meeting. 
 
-___
-3. Main site: Register as a Moderator -> Login as Mod -> Create room -> token {moderator: true} -> Join meeting -> Mod of the meeting
-4. Main site: Register as a Participant -> Login as Participant -> token{moderator: false}-> Join Meeting -> Participant of the meeting
+Currently, Jitsi has supported saving recorded files to Dropbox where you can easily configure it in `config.js`
+```
+fileRecordingsEnabled: true,
+dropbox: {
+    appKey: '<APP_KEY>' // Specify your app key here.
+    // A URL to redirect the user to, after authenticating
+    // by default uses:
+    // 'https://jitsi-meet.example.com/static/oauth.html'
+    redirectURI: 'https://jitsi-meet.example.com/subfolder/static/oauth.html'
+},
+```
+You can also specify where you want to store your recorded files such as S3.
 
-- Web UI: React.js [https://github.com/jitsi/jitsi-meet](https://github.com/jitsi/jitsi-meet)
-- Prosody Server:  [https://github.com/nvonahsen/jitsi-token-moderation-plugin]
-- Jicofo: 
-- Jitsi Video Bridge: 
+[Tutorial on integrate S3 Storage for Jibri](https://www.jibritutorials.com/?p=3662)
+## Recommended Articles
+1. [Jitsi for swiss higher education - success story](https://community.jitsi.org/t/jitsi-for-swiss-higher-education-success-story/24486)
+   - A Swiss company providing video conferencing service.
+   - This company uses 32 servers for video bridges, 8VCPUs and 8GB RAM each
+   - 1000 conferences a day, up to 40 people
+   - Each server handle averge of 4 - 5 conference, 20 participant simultaneously 
+   - [Their share about how they deployed their system ](https://community.jitsi.org/t/working-multi-jitsi-meet-multi-videobridge-setup/24704)
+2. [How Jitsi optimize their system](https://www.youtube.com/watch?v=SAaa8jYdtx4)
 
-**Quick install:** 
-- Pros: more customization
-- Cons: a lot of times, more effort require, need a strong devops guide
-
-**Docker** 
-- Pros: Easy to install, quicker, work with any OS
-- Cons: less customzation have on server
